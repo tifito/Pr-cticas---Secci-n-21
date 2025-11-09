@@ -1,0 +1,25 @@
+/*
+Crear un una tabla llamada “datos” con la siguiente estructura:
+Código int
+Texto varchar2(50)
+
+Crear un procedimiento llamado “handler1” que lea la tabla. Debe tener
+un handler que controle si la tabla existe. Código 1146.
+Probar que funcione sin problemas
+Luego eliminar la tabla y volver a probar el procedimiento. Debe
+devolver “tabla no existe”
+
+*/
+
+delimiter //
+drop procedure if exists leer_datos//   -- Elimina el procedimiento si ya existe, para poder crearlo de nuevo
+create procedure leer_datos()           -- Crea el procedimiento llamado leer_datos
+begin
+    declare exit handler for 1146       -- Declara un manejador de error (handler) para el código 1146 (tabla no existe)
+        select 'Esa tabla no existe';   -- Si ocurre ese error, mostrará este mensaje
+    select * from datos;                -- Intenta leer los datos de la tabla "datos"
+end//
+-- Probar el procedimiento
+call leer_datos()//                     -- Llama al procedimiento para comprobar su funcionamiento
+
+drop table datos; -- Para ver lo que hicimos, borren la tabla datos y ejecuten el procedimiento
