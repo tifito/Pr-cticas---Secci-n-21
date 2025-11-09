@@ -1,0 +1,31 @@
+/*
+Crear un procedimiento llamado “num_asignaturas” a la que la pasamos
+el código del alumno y debe devolver en una variable de tipo OUT el
+número de notas de asignaturas de ese alumno. Si el resultado es 0
+debemos genera un error con una SIGNAL de tipo SQLSTATE ‘45000’
+que ponga que el alumno no tiene asignaturas y no tiene nota. Lo
+debemos hacer con el campo “message_text” de la SIGNAL
+
+Pueden usar esta tabla
+CREATE TABLE notas_alumnos (
+    cod_alumno INT PRIMARY KEY,
+    nota DECIMAL
+);
+*/
+
+delimiter //
+drop procedure if exists num_asignaturas//   -- Elimina el procedimiento si ya existe
+CREATE procedure num_asignaturas(p_codigo int, out salida int)  -- Crea el procedimiento con un parámetro de entrada (p_codigo) y uno de salida (salida)
+BEGIN
+    declare valor_cero condition for sqlstate '45000';          -- Declara una condición personalizada llamada "valor_cero" asociada al código SQLSTATE 45000
+    select count(cod_alumno) into salida from notas_alumnos where cod_alumno=p_codigo;  -- Cuenta cuántas asignaturas tiene el alumno y guarda el resultado en "salida"
+    
+    if salida=0 then                                            -- Si el resultado es 0...
+        signal valor_cero                                       -- Lanza la señal de error declarada anteriormente
+        set message_text='El alumno no tiene asignaturas y por tanto no tiene nota';  -- Muestra el mensaje de error personalizado
+    end if;
+END//
+
+-- Probar la función
+set @salida="";                      -- Crea una variable para almacenar el resultado del procedimiento
+call num_asignaturas(150,@salida)//  -- Llama al procedimiento con el código del alumno 150 y guarda el resultado en @salida
