@@ -1,0 +1,32 @@
+/*
+Hacer un procedimiento denominado “insert_curso_error” que intente
+insertar una fila en la tabla cursos. Si la clave primaria está duplicada
+(código 1062), en vez de generar un error, recalculamos la clave indicando
+el valor más alto más uno
+
+Pueden usar esta tabla 
+create table cursos (
+  codigo int primary key,
+  nombre varchar(50),
+  precio decimal
+);
+
+*/
+
+delimiter //
+drop procedure if exists insert_curso_error//  -- Elimina el procedimiento si ya existe
+create procedure insert_curso_error(p_codigo int, p_nombre varchar(50), p_precio decimal)  -- Crea el procedimiento con parámetros para el código, nombre y precio
+begin
+    declare continue handler for 1062              -- Declara un handler que captura el error de clave duplicada (código 1062)
+    begin
+        select max(codigo)+1 into p_codigo from cursos;   -- Si ocurre el error, obtiene el código más alto de la tabla y le suma 1
+        insert into cursos values(p_codigo,p_nombre,p_precio);  -- Inserta el curso nuevamente con el nuevo código corregido
+    end; 
+ 
+    insert into cursos values(p_codigo,p_nombre,p_precio);   -- Intenta insertar el curso por primera vez (puede generar error 1062 si ya existe)
+end//
+
+-- Probar el procedimiento
+call insert_curso_error(1,'curso nuevo',100)//   -- Prueba con una clave duplicada (activa el handler)
+call insert_curso_error(301,'curso nuevo',100)// -- Prueba con una clave nueva (se inserta normalmente)
+select * from cursos;                            -- Muestra los cursos insertados
