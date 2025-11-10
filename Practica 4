@@ -1,0 +1,33 @@
+/*Hacer un procedimiento llamado “error_generico” que intente modificar la
+columna nombre de un curso, pasando el código y el nuevo nombre. Con
+una SQLEXCEPTION debemos controlar si hay algún error y luego pintar
+el número de error usando DIAGNOSTIC. Luego probamos con algún
+error, como por ejemplo pasándole un nulo al campo o un nombre
+duplicado, lo que sea.
+
+Pueden usar la tabla de la práctica anterior
+*/
+
+
+delimiter //
+drop procedure if exists error_generico//
+create procedure error_generico(p_codigo int, p_nombre varchar(50))
+begin
+    declare mensaje text;        -- Guarda el texto descriptivo del error
+    declare cod_error int;       -- Guarda el número del error (código MySQL)
+    
+    declare continue handler for sqlexception  -- Captura cualquier error SQL
+    begin
+        get diagnostics condition 1             -- Obtiene datos del último error
+        cod_error = mysql_errno, mensaje = message_text;
+        select concat('Error ', cod_error, ' --> ', mensaje);  -- Muestra el código y mensaje
+    end;
+    
+    update cursos set nombre = p_nombre where codigo = p_codigo;  -- Intenta actualizar el nombre
+end//
+delimiter ;
+
+-- Pruebas del procedimiento
+call error_generico(1, 'curso nuevo');//  -- nombre ya existente
+call error_generico(1, NULL);//          -- valor nulo
+call error_generico(1, 'AAAAAA');//      -- correcto
