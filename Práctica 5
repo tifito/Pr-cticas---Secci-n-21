@@ -1,0 +1,26 @@
+/*Crear un procedimiento llamado “error_condition”. Usando el ejercicio
+de la practica 4, hacemos un update, aunque en este caso creamos 2 Condition,
+una para el nombre duplicado y el otro para el NULL. Lo probamos
+*/
+
+delimiter //
+drop procedure if exists error_condition//                                  -- Elimina el procedimiento si existe
+create procedure error_condition(p_codigo int, p_nombre varchar(50))        -- Crea el procedimiento con parámetros
+begin
+declare mensaje text;                                                       -- Variable para mensaje (no usada aquí)
+declare cod_error int;                                                      -- Variable para código de error (tampoco usada)
+declare nombre_duplicado condition for 1062;                                -- Condition: error 1062 = nombre duplicado
+declare nombre_nulo condition for 1048;                                     -- Condition: error 1048 = valor nulo
+
+declare exit handler for nombre_duplicado                                   -- Handler si ocurre duplicado
+ select concat('El nombre ',p_nombre,' ya existe');                         -- Mensaje personalizado
+
+declare exit handler for nombre_nulo                                        -- Handler si el nombre es NULL
+ select concat('El nombre no puede estar a nulo');                          -- Mensaje personalizado
+
+ update cursos set nombre=p_nombre where cod_curso=p_codigo;                -- Intenta actualizar el curso
+end//
+-- Probar el procedimiento
+call error_condition(1,'curso nuevo')// -- con nombre ya existente
+call error_condition(1,NULL)//          -- con un valor nulo
+call error_condition(1,'AAAAAA')//      -- correcto

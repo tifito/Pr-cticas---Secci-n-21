@@ -1,4 +1,0 @@
-/*Crear un procedimiento llamado “error_condition”. Usando el ejercicio
-de la practica 4, hacemos un update, aunque en este caso creamos 2 Condition,
-una para el nombre duplicado y el otro para el NULL. Lo probamos
-*/
