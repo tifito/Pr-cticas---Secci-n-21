@@ -5,8 +5,7 @@ el número de error usando DIAGNOSTIC. Luego probamos con algún
 error, como por ejemplo pasándole un nulo al campo o un nombre
 duplicado, lo que sea.
 
-Pueden usar la tabla de la práctica anterior
-*/
+
 
 
 delimiter //
@@ -23,7 +22,7 @@ begin
         select concat('Error ', cod_error, ' --> ', mensaje);  -- Muestra el código y mensaje
     end;
     
-    update cursos set nombre = p_nombre where codigo = p_codigo;  -- Intenta actualizar el nombre
+    update cursos set nombre = p_nombre where cod_curso = p_codigo;  -- Intenta actualizar el nombre
 end//
 delimiter ;
 
