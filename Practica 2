@@ -6,11 +6,7 @@ debemos genera un error con una SIGNAL de tipo SQLSTATE ‘45000’
 que ponga que el alumno no tiene asignaturas y no tiene nota. Lo
 debemos hacer con el campo “message_text” de la SIGNAL
 
-Pueden usar esta tabla
-CREATE TABLE notas_alumnos (
-    cod_alumno INT PRIMARY KEY,
-    nota DECIMAL
-);
+
 */
 
 delimiter //
